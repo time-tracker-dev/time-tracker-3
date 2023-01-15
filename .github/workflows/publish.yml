@@ -1,0 +1,26 @@
+name: publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish-hello-docker-image:
+    name: Build docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to Github Container registry
+        run: |
+          docker build . --tag ghcr.io/time-tracker-dev/time-tracker-3:latest
+          docker run ghcr.io/time-tracker-dev/time-tracker-3:latest
+          docker push ghcr.io/time-tracker-dev/time-tracker-3:latest
